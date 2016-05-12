@@ -5,19 +5,6 @@ require 'slim'
 module SlimCms
   class Sitemap
 
-    class MockScope
-      def initialize(route, entry)
-        @route = route
-        @index = entry[:children]
-      end
-
-      def partial(*args)
-        args.to_s
-      end
-
-      attr_accessor :meta
-    end
-
     def initialize(root_path, conf_dir, view_dir)
       @root_path = Pathname.new(root_path)
       @view_path = @root_path + view_dir
@@ -33,6 +20,10 @@ module SlimCms
 
     def all_entries
       @sitemap ||= YAML.load_file(@conf_file) rescue nil
+    end
+
+    def reload_entries
+      @sitemap = YAML.load_file(@conf_file) rescue nil
     end
 
     def top_level_entries(current_route='/')
@@ -106,7 +97,7 @@ module SlimCms
       entry[:last_modified] = path.mtime
 
       if view_path.file?
-        mock_scope = MockScope.new(route, entry)
+        mock_scope = SlimCms::MockScope.new(route, entry)
         Slim::Template.new(entry[:view_path]).render(mock_scope)
 
         entry.merge!(mock_scope.meta) if mock_scope.meta
