@@ -97,7 +97,7 @@ module SlimCms
       entry[:last_modified] = path.mtime
 
       if view_path.file?
-        mock_scope = SlimCms::MockScope.new(route, entry)
+        mock_scope = SlimCms::MockRenderScope.new(route, entry)
         Slim::Template.new(entry[:view_path]).render(mock_scope)
 
         entry.merge!(mock_scope.meta) if mock_scope.meta
