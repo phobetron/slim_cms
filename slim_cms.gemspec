@@ -24,5 +24,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'slim'
   gem.add_dependency 'sass'
 
+  gem.add_development_dependency 'bundler'
+  gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'byebug'
   gem.add_development_dependency 'sinatra-reloader'
 end

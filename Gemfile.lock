@@ -1,0 +1,66 @@
+PATH
+  remote: .
+  specs:
+    slim_cms (0.1.0)
+      sass
+      sinatra
+      sinatra-contrib
+      sinatra-partial
+      slim
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    backports (3.6.8)
+    byebug (9.0.5)
+    diff-lcs (1.2.5)
+    multi_json (1.12.1)
+    rack (1.6.4)
+    rack-protection (1.5.3)
+      rack
+    rack-test (0.6.3)
+      rack (>= 1.0)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.4)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
+    sass (3.4.22)
+    sinatra (1.4.7)
+      rack (~> 1.5)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
+    sinatra-contrib (1.4.7)
+      backports (>= 2.0)
+      multi_json
+      rack-protection
+      rack-test
+      sinatra (~> 1.4.0)
+      tilt (>= 1.3, < 3)
+    sinatra-partial (1.0.0)
+      sinatra (~> 1.4)
+    sinatra-reloader (1.0)
+      sinatra-contrib
+    slim (3.0.7)
+      temple (~> 0.7.6)
+      tilt (>= 1.3.3, < 2.1)
+    temple (0.7.7)
+    tilt (2.0.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler
+  byebug
+  rspec
+  sinatra-reloader
+  slim_cms!

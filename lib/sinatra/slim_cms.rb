@@ -43,6 +43,7 @@ module Sinatra
       app.helpers SlimCms::Helpers
 
       app.set :partial_template_engine, :slim
+      app.set :root, app.root || File.dirname(__FILE__)
       app.set :views, 'views'
       app.set :config, 'config'
       app.set :sitemap, ::SlimCms::Sitemap.new(Pathname.new(app.root), app.config, app.views)
