@@ -15,8 +15,6 @@ module SlimCms
         all_entries
       elsif @view_path.exist?
         generate
-      else
-        nil
       end
     end
 

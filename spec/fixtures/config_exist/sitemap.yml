@@ -1,0 +1,18 @@
+---
+"/":
+  :view_path: views/index.slim
+  :last_modified: 2016-05-12 05:12:05.000000000 -07:00
+  :directory: true
+  :indexed: true
+  :children:
+    "/file":
+      :view_path: views/file.slim
+      :last_modified: 2016-05-12 04:59:49.000000000 -07:00
+    "/sub":
+      :view_path: views/sub
+      :last_modified: 2016-05-12 05:14:17.000000000 -07:00
+      :directory: true
+      :children:
+        "/sub/file":
+          :view_path: views/sub/file.slim
+          :last_modified: 2016-05-12 04:59:49.000000000 -07:00

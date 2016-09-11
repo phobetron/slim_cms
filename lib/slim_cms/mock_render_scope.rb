@@ -1,6 +1,6 @@
 module SlimCms
   class MockRenderScope
-    def initialize(route, entry)
+    def initialize(route, entry={})
       @route = route
       @index = entry[:children]
     end

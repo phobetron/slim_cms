@@ -46,7 +46,7 @@ module Sinatra
       app.set :root, app.root || File.dirname(__FILE__)
       app.set :views, 'views'
       app.set :config, 'config'
-      app.set :sitemap, ::SlimCms::Sitemap.new(Pathname.new(app.root), app.config, app.views)
+      app.set :sitemap, ::SlimCms::Sitemap.new(app.root, app.config, app.views)
 
       app.get '/stylesheets/*.css' do
         content_type 'text/css', :charset => 'utf-8'
