@@ -23,6 +23,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'sinatra-partial'
   gem.add_dependency 'slim'
   gem.add_dependency 'sass'
+  gem.add_dependency 'nokogiri'
 
   gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'rspec'

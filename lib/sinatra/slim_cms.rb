@@ -53,6 +53,12 @@ module Sinatra
         render_style params[:splat].first
       end
 
+      app.get '/sitemap.xml' do
+        content_type 'text/xml', :charset => 'utf-8'
+
+        settings.sitemap.to_xml(request.scheme + '//' + request.host)
+      end
+
       app.get '/*' do
         @route = "/#{ params[:splat].compact.reject { |s| s.empty? }.first }"
 

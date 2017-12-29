@@ -1,3 +1,4 @@
+require 'nokogiri'
 require 'pathname'
 require 'yaml'
 
@@ -68,6 +69,33 @@ module SlimCms
       end
 
       success ? entry : nil
+    end
+
+    def flatten(entries=all_entries.dup, map={})
+      entries.each do |path, meta|
+        map[path] = meta.dup
+
+        flatten(meta[:children], map) if meta[:children]
+
+        map.delete(:children)
+      end
+
+      map
+    end
+
+    def to_xml(domain)
+      domain.chomp!('/')
+
+      Nokogiri::XML::Builder.new do
+        urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
+          flatten.each do |path, meta|
+            url {
+              loc     domain + path
+              lastmod meta[:last_modified]
+            }
+          end
+        }
+      end.to_xml
     end
 
     private

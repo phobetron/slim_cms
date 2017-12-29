@@ -242,4 +242,64 @@ describe SlimCms::Sitemap do
       end
     end
   end
+
+  context '#flatten' do
+    subject do
+      described_class.new(
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures',
+        'config_exist',
+        'views'
+      )
+    end
+
+    it 'lists all pages in the returned Hash' do
+      flattened = subject.flatten
+
+      expect(flattened['/']).not_to be_nil
+      expect(flattened['/file']).not_to be_nil
+      expect(flattened['/sub']).not_to be_nil
+      expect(flattened['/sub/file']).not_to be_nil
+    end
+
+    it 'does not include children/hierarchy in metadata' do
+      flattened = subject.flatten
+
+      expect(flattened['/'][:children]).to be_nil
+      expect(flattened['/sub'][:children]).to be_nil
+    end
+  end
+
+  context '#to_xml' do
+    subject do
+      described_class.new(
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures',
+        'config_exist',
+        'views'
+      )
+    end
+
+    it 'outputs the sitemap in XML format' do
+      xml = subject.to_xml('http://example.com/')
+
+      expect(xml).to match('<\?xml version="1.0"\?>')
+    end
+
+    it 'outputs an entry for each page' do
+      xml = subject.to_xml('http://example.com/')
+
+      expect(xml).to match('<loc>http://example.com/</loc>')
+      expect(xml).to match('<loc>http://example.com/file</loc>')
+      expect(xml).to match('<loc>http://example.com/sub</loc>')
+      expect(xml).to match('<loc>http://example.com/sub/file</loc>')
+    end
+
+    it 'outputs the modified date for each page' do
+      xml = subject.to_xml('http://example.com/')
+
+      expect(xml).to match('<lastmod>2016-05-12 05:12:05 -0700</lastmod>')
+      expect(xml).to match('<lastmod>2016-05-12 04:59:49 -0700</lastmod>')
+      expect(xml).to match('<lastmod>2016-05-12 05:14:17 -0700</lastmod>')
+      expect(xml).to match('<lastmod>2016-05-12 04:59:49 -0700</lastmod>')
+    end
+  end
 end
