@@ -3,9 +3,11 @@ PATH
   specs:
     slim_cms (0.1.0)
       nokogiri
+      rack-test
       sass
       sinatra
       sinatra-contrib
+      sinatra-export
       sinatra-partial
       slim
 
@@ -17,6 +19,8 @@ GEM
     diff-lcs (1.3)
     ffi (1.9.18)
     mini_portile2 (2.3.0)
+    monkey-lib (0.4.2)
+      backports
     multi_json (1.12.2)
     mustermann (1.0.1)
     nokogiri (1.8.1)
@@ -24,6 +28,9 @@ GEM
     rack (2.0.3)
     rack-protection (2.0.0)
       rack
+    rack-test (0.8.2)
+      rack (>= 1.0, < 3)
+    rake (12.3.0)
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
@@ -40,7 +47,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
-    sass (3.5.4)
+    sass (3.5.5)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -50,6 +57,10 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.0)
       tilt (~> 2.0)
+    sinatra-advanced-routes (0.4.1)
+      monkey-lib (~> 0.4.0)
+      sinatra (>= 0.9.4)
+      sinatra-sugar (~> 0.4.0)
     sinatra-contrib (2.0.0)
       backports (>= 2.0)
       multi_json
@@ -57,15 +68,28 @@ GEM
       rack-protection (= 2.0.0)
       sinatra (= 2.0.0)
       tilt (>= 1.3, < 3)
+    sinatra-export (1.0.1)
+      rack
+      rack-test
+      rake
+      sinatra
+      sinatra-advanced-routes
+      term-ansicolor
     sinatra-partial (1.0.1)
       sinatra (>= 1.4)
     sinatra-reloader (1.0)
       sinatra-contrib
+    sinatra-sugar (0.4.1)
+      monkey-lib (~> 0.4.0)
+      sinatra (>= 0.9.4)
     slim (3.0.9)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 1.3.3, < 2.1)
     temple (0.8.0)
+    term-ansicolor (1.6.0)
+      tins (~> 1.0)
     tilt (2.0.8)
+    tins (1.16.3)
 
 PLATFORMS
   ruby

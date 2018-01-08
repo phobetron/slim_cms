@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'pathname'
 require 'yaml'
+require 'slim_cms/view_file_scanner'
 
 module SlimCms
   class Sitemap
@@ -74,10 +75,9 @@ module SlimCms
     def flatten(entries=all_entries.dup, map={})
       entries.each do |path, meta|
         map[path] = meta.dup
+        map[path].delete(:children)
 
         flatten(meta[:children], map) if meta[:children]
-
-        map.delete(:children)
       end
 
       map

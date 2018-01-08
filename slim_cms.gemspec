@@ -12,21 +12,24 @@ Gem::Specification.new do |gem|
   gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.bindir        = 'exe'
+  gem.executables   = gem.files.grep(%r{^exe/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = 'slim_cms'
   gem.require_paths = ['lib']
   gem.version       = SlimCms::VERSION
 
+  gem.add_dependency 'nokogiri'
+  gem.add_dependency 'rack-test'
   gem.add_dependency 'sinatra'
   gem.add_dependency 'sinatra-contrib'
+  gem.add_dependency 'sinatra-export'
   gem.add_dependency 'sinatra-partial'
-  gem.add_dependency 'slim'
   gem.add_dependency 'sass'
-  gem.add_dependency 'nokogiri'
+  gem.add_dependency 'slim'
 
   gem.add_development_dependency 'bundler'
-  gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'byebug'
   gem.add_development_dependency 'sinatra-reloader'
+  gem.add_development_dependency 'rspec'
 end
