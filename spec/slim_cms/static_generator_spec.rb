@@ -116,7 +116,7 @@ describe SlimCms::StaticGenerator do
     it 'creates directories for the given path if one does not exist' do
       dir_pathname = Pathname.new('/path/public/dir')
 
-      expect(File).to receive(:directory?).with(dir_pathname).and_return(false)
+      expect_any_instance_of(Pathname).to receive(:directory?).and_return(false)
       expect(FileUtils).to receive(:mkdir_p).with(dir_pathname)
 
       subject.write(path, 'content')
@@ -126,30 +126,6 @@ describe SlimCms::StaticGenerator do
       expect(File).to receive(:open).with(Pathname.new("#{pwd}/public#{path}"), 'w')
 
       subject.write(path, 'content')
-    end
-  end
-
-  describe '#archive' do
-    let(:path) { '/dir/file.out' }
-    let!(:time) { Time.new(2018, 1, 8, 22, 11) }
-
-    before do
-      allow(Time).to receive(:now).and_return(time)
-      allow(File).to receive(:cp)
-    end
-
-    it 'copies an existing file to the archive' do
-      expect(File).to receive(:exist?).and_return(true)
-      expect(File).to receive(:cp).with(path, Pathname.new("#{pwd}/archive/20180108-2211#{path}"))
-
-      subject.archive(path)
-    end
-
-    it 'does not attempt to copy inexistent files' do
-      expect(File).to receive(:exist?).and_return(false)
-      expect(File).not_to receive(:cp)
-
-      subject.archive(path)
     end
   end
 end

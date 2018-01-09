@@ -35,7 +35,7 @@ module Sinatra
       end
 
       def render_style(route)
-        scss route.to_sym, :views => "assets/stylesheets"
+        scss route.to_sym, views: 'assets/stylesheets', style: :compressed
       end
     end
 
@@ -48,25 +48,14 @@ module Sinatra
       app.set :config, 'config'
       app.set :sitemap, ::SlimCms::Sitemap.new(app.root, app.config, app.views)
 
-      app.get '/stylesheets/*.css' do
-        content_type 'text/css', :charset => 'utf-8'
-        render_style params[:splat].first
-      end
-
       app.before do
         settings.sitemap.generate
       end
 
-      app.get '/sitemap.xml' do
-        content_type 'text/xml', :charset => 'utf-8'
-
-        settings.sitemap.to_xml(request.scheme + '//' + request.host)
-      end
-
       app.get '/robots.txt' do
-        content_type 'text/plain', :charset => 'utf-8'
+        content_type 'text/plain', charset: 'utf-8'
 
-        output = ["Sitemap: /sitemap.xml"]
+        output = ['Sitemap: /sitemap.xml']
 
         settings.sitemap.robots.each_pair do |ua, directives|
           group = ["user-agent: #{ua}"]
@@ -76,6 +65,17 @@ module Sinatra
         end
 
         output.join("\n\n")
+      end
+
+      app.get '/sitemap.xml' do
+        content_type 'text/xml', charset: 'utf-8'
+
+        settings.sitemap.to_xml(request.scheme + '//' + request.host)
+      end
+
+      app.get '/stylesheets/*.css' do
+        content_type 'text/css', charset: 'utf-8'
+        render_style params[:splat].first
       end
 
       app.get '/*' do

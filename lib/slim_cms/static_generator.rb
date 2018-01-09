@@ -34,7 +34,7 @@ module SlimCms
       Pathname.new('assets/stylesheets').children.each do |child_path|
         output_path = child_path.sub('assets/', '').sub('.scss', '.css')
 
-        write(output_path, get(output_path).body) unless Pathname.new(output_path).basename.to_s.start_with?('_')
+        write(output_path, get("/#{output_path}").body) unless Pathname.new(output_path).basename.to_s.start_with?('_')
       end
     end
 
@@ -43,21 +43,8 @@ module SlimCms
 
       ensure_dir_exists(output_path)
 
-      archive(output_path)
-
       File.open(output_path, 'w') do |file|
         file.write(content)
-      end
-    end
-
-    def archive(path)
-      if (File.exist?(path))
-        dirname = "archive/#{Time.now.strftime('%Y%m%d-%H%M')}"
-        output_path = Pathname.new(File.join(Dir.pwd, dirname, path))
-
-        ensure_dir_exists(output_path)
-
-        File.cp(path, output_path)
       end
     end
 
@@ -66,7 +53,7 @@ module SlimCms
     def ensure_dir_exists(path)
       dirname = path.dirname
 
-      unless File.directory?(dirname)
+      unless dirname.directory?
         FileUtils.mkdir_p(dirname)
       end
     end

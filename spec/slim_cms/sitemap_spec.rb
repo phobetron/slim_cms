@@ -193,9 +193,9 @@ describe SlimCms::Sitemap do
   describe '#ancestry_for' do
     it 'finds all the ancestors for the given route, including the route entry' do
       expect(subject.ancestry_for('/sub/file', scan)).to eq([
-        { '/' => { :view_path => 'views/index.slim', :directory => true, :indexed => true, :robots => { "*" => :allow } } },
-        { '/sub' => { :view_path => 'views/sub', :directory => true, :robots => { "*" => :disallow } } },
-        { '/sub/file' => { :view_path => 'views/sub/file.slim' } }
+        { '/' => { view_path: 'views/index.slim', directory: true, indexed: true, robots: { "*" => :allow } } },
+        { '/sub' => { view_path: 'views/sub', directory: true, robots: { "*" => :disallow } } },
+        { '/sub/file' => { view_path: 'views/sub/file.slim' } }
       ])
     end
   end
@@ -203,7 +203,7 @@ describe SlimCms::Sitemap do
   describe '#find' do
     context 'entry exists for route' do
       it 'returns the entry for the given route within the entry hierarchy' do
-        expect(subject.find('/sub/file', scan)).to eq({ :view_path => 'views/sub/file.slim' })
+        expect(subject.find('/sub/file', scan)).to eq({ view_path: 'views/sub/file.slim' })
       end
     end
 
@@ -231,7 +231,7 @@ describe SlimCms::Sitemap do
 
       it 'writes changes to the YAML file' do
         expect(subject.update('/sub/file', { key: 'value' })).to eq({
-          :view_path => 'views/sub/file.slim',
+          view_path: 'views/sub/file.slim',
           key: 'value'
         })
       end
