@@ -1,8 +1,6 @@
 require 'fileutils'
 require 'rack/test'
 
-# TODO: archive old files
-
 module SlimCms
   class StaticGenerator
     include Rack::Test::Methods
@@ -15,7 +13,7 @@ module SlimCms
       sitemap.keys.each do |path|
         meta = sitemap[path]
 
-        output_path = meta[:directory] ? path + '/index.html' : path.dup
+        output_path = meta[:directory] ? "#{path}/index.html" : path.dup
         output_path.gsub!('//', '/')
 
         write(output_path, get(path).body)
@@ -38,14 +36,34 @@ module SlimCms
 
     def write(path, content)
       output_path = Pathname.new(File.join(Dir.pwd, 'public', path))
-      output_dirname = output_path.dirname
 
-      unless File.directory?(output_dirname)
-        FileUtils.mkdir_p(output_dirname)
-      end
+      ensure_dir_exists(output_path)
+
+      archive(output_path)
 
       File.open(output_path, 'w') do |file|
         file.write(content)
+      end
+    end
+
+    def archive(path)
+      if (File.exist?(path))
+        dirname = "archive/#{Time.now.strftime('%Y%m%d-%H%M')}"
+        output_path = Pathname.new(File.join(Dir.pwd, dirname, path))
+
+        ensure_dir_exists(output_path)
+
+        File.cp(path, output_path)
+      end
+    end
+
+    private
+
+    def ensure_dir_exists(path)
+      dirname = path.dirname
+
+      unless File.directory?(dirname)
+        FileUtils.mkdir_p(dirname)
       end
     end
   end
