@@ -64,7 +64,10 @@ module SlimCms
     end
 
     def route_for(path)
-      route = path.cleanpath.sub(@view_path.to_s, '').sub_ext('').sub(/index$/, '')
+      route = path.cleanpath.sub(@view_path.to_s, '')
+      route = route.sub_ext('.html') if route.extname == '.slim'
+      route = route.sub(/index(?:\.html)$/, '')
+
       route.to_s.size == 0 ? '/' : route
     end
 

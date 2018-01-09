@@ -11,17 +11,17 @@ describe SlimCms::ViewFileScanner do
 
     it 'adds an entry by route for each file in the given path' do
       expect(scan.keys.first).to eq('/')
-      expect(scan['/'][:children].keys.first).to eq('/file')
+      expect(scan['/'][:children].keys.first).to eq('/file.html')
     end
 
     it 'adds view path to the entry' do
       expect(scan['/'][:view_path]).to eq('views/index.slim')
-      expect(scan['/'][:children]['/file'][:view_path]).to eq('views/file.slim')
+      expect(scan['/'][:children]['/file.html'][:view_path]).to eq('views/file.slim')
     end
 
     it 'adds modified time to the entry' do
       expect(scan['/'][:last_modified]).to be_a(Time)
-      expect(scan['/'][:children]['/file'][:last_modified]).to be_a(Time)
+      expect(scan['/'][:children]['/file.html'][:last_modified]).to be_a(Time)
     end
 
     context 'if view path is to a file' do
@@ -42,14 +42,14 @@ describe SlimCms::ViewFileScanner do
 
       it 'merges meta data from the slim scope into the entry' do
         expect(scan['/'][:key]).to be_nil
-        expect(scan['/'][:children]['/file'][:key]).to eq('value')
+        expect(scan['/'][:children]['/file.html'][:key]).to eq('value')
       end
     end
 
     context 'if path is to a directory' do
       it 'marks the entry as a directory' do
         expect(scan['/'][:directory]).to be true
-        expect(scan['/'][:children]['/file'][:directory]).to be_nil
+        expect(scan['/'][:children]['/file.html'][:directory]).to be_nil
         expect(scan['/'][:children]['/sub'][:directory]).to be true
       end
 
@@ -59,7 +59,7 @@ describe SlimCms::ViewFileScanner do
 
       it 'excludes files and directories named common, layout, or index' do
         expect(scan.keys).to eq(['/'])
-        expect(scan['/'][:children].keys).to eq(['/file', '/sub'])
+        expect(scan['/'][:children].keys).to eq(['/file.html', '/sub'])
       end
 
       context 'if view path exists and is an index' do
