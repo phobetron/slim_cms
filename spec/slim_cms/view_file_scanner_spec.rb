@@ -6,8 +6,17 @@ describe SlimCms::ViewFileScanner do
 
   subject { described_class.new(root_path, view_path) }
 
-  context '#scan' do
+  describe '#scan' do
+    let(:meta) { { key: 'value' } }
+    let(:mock_scope) { double(meta: meta) }
+    let(:mock_slim) { double }
     let(:scan) { subject.scan(view_path) }
+
+    before do
+      allow(SlimCms::MockRenderScope).to receive(:new).with(any_args).and_return(mock_scope)
+      allow(Slim::Template).to receive(:new).with(any_args).and_return(mock_slim)
+      allow(mock_slim).to receive(:render).with(any_args)
+    end
 
     it 'adds an entry by route for each file in the given path' do
       expect(scan.keys.first).to eq('/')
@@ -25,23 +34,12 @@ describe SlimCms::ViewFileScanner do
     end
 
     context 'if view path is to a file' do
-      let(:meta) { { key: 'value' } }
-      let(:mock_scope) { double(meta: meta) }
-      let(:mock_slim) { double }
-
-      before do
-        allow(SlimCms::MockRenderScope).to receive(:new).with(any_args).and_return(mock_scope)
-        allow(Slim::Template).to receive(:new).with(any_args).and_return(mock_slim)
-        allow(mock_slim).to receive(:render).with(any_args)
-      end
-
       it 'runs the view file in slim' do
         expect(Slim::Template).to receive(:new).with(any_args)
         scan
       end
 
       it 'merges meta data from the slim scope into the entry' do
-        expect(scan['/'][:key]).to be_nil
         expect(scan['/'][:children]['/file.html'][:key]).to eq('value')
       end
     end
@@ -67,11 +65,20 @@ describe SlimCms::ViewFileScanner do
           expect(scan['/'][:indexed]).to be true
           expect(scan['/'][:children]['/sub'][:indexed]).to be false
         end
+
+        it 'runs the view file in slim' do
+          expect(Slim::Template).to receive(:new).with(any_args)
+          scan
+        end
+
+        it 'merges meta data from the slim scope into the entry' do
+          expect(scan['/'][:key]).to eq('value')
+        end
       end
     end
   end
 
-  context '#clean' do
+  describe '#clean' do
     let(:scan) do
       map = subject.scan(view_path)
       map['/'][:children]['/nonexistent'] = { view_path: 'views/nonexistent.slim' }

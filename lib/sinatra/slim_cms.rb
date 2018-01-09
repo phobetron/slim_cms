@@ -53,10 +53,29 @@ module Sinatra
         render_style params[:splat].first
       end
 
+      app.before do
+        settings.sitemap.generate
+      end
+
       app.get '/sitemap.xml' do
         content_type 'text/xml', :charset => 'utf-8'
 
         settings.sitemap.to_xml(request.scheme + '//' + request.host)
+      end
+
+      app.get '/robots.txt' do
+        content_type 'text/plain', :charset => 'utf-8'
+
+        output = ["Sitemap: /sitemap.xml"]
+
+        settings.sitemap.robots.each_pair do |ua, directives|
+          group = ["user-agent: #{ua}"]
+          group.concat(directives.sort)
+
+          output << group.join("\n")
+        end
+
+        output.join("\n\n")
       end
 
       app.get '/*' do

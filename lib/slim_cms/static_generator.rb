@@ -22,6 +22,10 @@ module SlimCms
       end
     end
 
+    def generate_robots_txt
+      write('robots.txt', get('robots.txt').body)
+    end
+
     def generate_sitemap_xml
       write('sitemap.xml', get('sitemap.xml').body)
     end

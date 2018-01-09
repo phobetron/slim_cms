@@ -19,16 +19,19 @@ module SlimCms
       entry[:view_path] = view_path.to_s
       entry[:last_modified] = path.mtime
 
-      if path.file?
-        mock_scope = SlimCms::MockRenderScope.new(route, entry)
-        Slim::Template.new(path).render(mock_scope)
+      mock_scope = SlimCms::MockRenderScope.new(route, entry)
 
-        entry.merge!(mock_scope.meta) if mock_scope.meta
+      if path.file?
+        Slim::Template.new(path).render(mock_scope)
+      elsif has_index_view?(entry)
+        Slim::Template.new(path + 'index.slim').render(mock_scope)
       end
+
+      entry.merge!(mock_scope.meta) if mock_scope.meta
 
       if path.directory?
         entry[:directory] = true
-        entry[:indexed] = entry[:view_path].end_with?('index.slim')
+        entry[:indexed] = has_index_view?(entry)
 
         path.children.reject { |child_path| excluded?(child_path) }.each do |child_path|
           scan(child_path, entry[:children] ||= {})
@@ -69,6 +72,10 @@ module SlimCms
       route = route.sub(/index(?:\.html)$/, '')
 
       route.to_s.size == 0 ? '/' : route
+    end
+
+    def has_index_view?(entry)
+      entry[:view_path].end_with?('index.slim')
     end
 
   end

@@ -8,3 +8,4 @@ generator = SlimCms::StaticGenerator.new
 generator.generate_views(SlimCms::Sitemap.new(Sinatra::Application.root, 'config', 'views').generate)
 generator.generate_stylesheets
 generator.generate_sitemap_xml
+generator.generate_robots_txt

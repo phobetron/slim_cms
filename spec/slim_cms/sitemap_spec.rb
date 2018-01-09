@@ -6,13 +6,18 @@ describe SlimCms::Sitemap do
     {
       '/' => {
         view_path: 'views/index.slim',
-        directory: 'true',
-        indexed: 'true',
+        directory: true,
+        indexed: true,
+        robots: { '*' => :allow },
         children: {
-          '/file' => { view_path: 'views/file.slim' },
+          '/file' => {
+            view_path: 'views/file.slim',
+            robots: { '*' => :allow },
+          },
           '/sub' => {
             view_path: 'views/sub',
             directory: true,
+            robots: { '*' => :disallow },
             children: {
               '/sub/file' => { view_path: 'views/sub/file.slim' }
             }
@@ -37,7 +42,7 @@ describe SlimCms::Sitemap do
     )
   end
 
-  context '.new' do
+  describe '.new' do
     context 'when config file does not exist' do
       context 'when view directory exists' do
         it 'scans the view directory' do
@@ -81,7 +86,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#all_entries' do
+  describe '#all_entries' do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
@@ -109,7 +114,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#reload_entries' do
+  describe '#reload_entries' do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
@@ -137,7 +142,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#generate' do
+  describe '#generate' do
     it 'scans views using the view file scanner' do
       expect(scanner).to receive(:scan)
       expect(scanner).to receive(:clean)
@@ -155,7 +160,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#top_level_entries' do
+  describe '#top_level_entries' do
     context 'root level exists' do
       before do
         allow_any_instance_of(described_class).to receive(:all_entries).and_return(scan)
@@ -185,17 +190,17 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#ancestry_for' do
+  describe '#ancestry_for' do
     it 'finds all the ancestors for the given route, including the route entry' do
       expect(subject.ancestry_for('/sub/file', scan)).to eq([
-        { '/' => { :view_path => 'views/index.slim', :directory => 'true', :indexed => 'true' } },
-        { '/sub' => { :view_path => 'views/sub', :directory => true } },
+        { '/' => { :view_path => 'views/index.slim', :directory => true, :indexed => true, :robots => { "*" => :allow } } },
+        { '/sub' => { :view_path => 'views/sub', :directory => true, :robots => { "*" => :disallow } } },
         { '/sub/file' => { :view_path => 'views/sub/file.slim' } }
       ])
     end
   end
 
-  context '#find' do
+  describe '#find' do
     context 'entry exists for route' do
       it 'returns the entry for the given route within the entry hierarchy' do
         expect(subject.find('/sub/file', scan)).to eq({ :view_path => 'views/sub/file.slim' })
@@ -209,7 +214,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#update' do
+  describe '#update' do
     before do
       allow_any_instance_of(described_class).to receive(:all_entries).and_return(scan)
     end
@@ -243,7 +248,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#flatten' do
+  describe '#flatten' do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
@@ -269,7 +274,7 @@ describe SlimCms::Sitemap do
     end
   end
 
-  context '#to_xml' do
+  describe '#to_xml' do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
@@ -300,6 +305,22 @@ describe SlimCms::Sitemap do
       expect(xml).to match('<lastmod>2016-05-12 04:59:49 -0700</lastmod>')
       expect(xml).to match('<lastmod>2016-05-12 05:14:17 -0700</lastmod>')
       expect(xml).to match('<lastmod>2016-05-12 04:59:49 -0700</lastmod>')
+    end
+  end
+
+  describe '#robots' do
+    subject do
+      described_class.new(
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures',
+        'config_exist',
+        'views'
+      )
+    end
+
+    it 'outputs a hash of path directives grouped by user agent' do
+      robots = subject.robots
+
+      expect(robots.keys).to eq(['*'])
     end
   end
 end

@@ -61,6 +61,15 @@ describe SlimCms::StaticGenerator do
       end
     end
 
+    describe 'generate_robots_txt' do
+      it 'creates a robots.txt file' do
+        expect(subject).to receive(:get).with('robots.txt')
+        expect(subject).to receive(:write).with('robots.txt', content_body)
+
+        subject.generate_robots_txt
+      end
+    end
+
     describe 'generate_sitemap_xml' do
       it 'creates a sitemap.xml file' do
         expect(subject).to receive(:get).with('sitemap.xml')

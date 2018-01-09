@@ -98,6 +98,22 @@ module SlimCms
       end.to_xml
     end
 
+    def robots
+      groups = { '*' => [] }
+
+      flatten.each_pair do |path, meta|
+        if meta[:robots]
+          meta[:robots].each_pair do |ua, directive|
+            groups[ua.downcase] ||= []
+
+            groups[ua.downcase] << "#{directive.downcase}: #{path}"
+          end
+        end
+      end
+
+      groups
+    end
+
     private
 
     def write
