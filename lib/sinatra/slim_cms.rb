@@ -1,76 +1,34 @@
 require 'sinatra/base'
 require 'sinatra/contrib'
 require 'sinatra/partial'
-require 'sass'
-require 'slim'
-require 'slim_cms/sitemap'
+require 'sinatra/helpers'
+require 'slim_cms'
 
 module Sinatra
   module SlimCms
-
-    module Helpers
-      def titleize(text)
-        text.to_s.gsub(/_+/, ' ').gsub(/\b('?[a-z])/) { $1.capitalize }
-      end
-
-      def sections
-        @sections ||= settings.sitemap
-          .top_level_entries(@route || '/')
-          .select { |route, entry| !!entry[:directory] }
-      end
-
-      def site_pages
-        @site_pages ||= settings.sitemap
-          .top_level_entries(@route || '/')
-          .select { |route, entry| !entry[:directory] }
-      end
-
-      def breadcrumbs
-        @breadcrumbs ||= settings.sitemap.ancestry_for(@route || '/')
-          .reject { |crumb| crumb.keys.first.end_with?('/') }
-      end
-
-      def render_view(route)
-        slim route.to_sym
-      end
-
-      def render_style(route)
-        scss route.to_sym, views: 'assets/stylesheets', style: :compressed
-      end
-    end
-
     def self.registered(app)
-      app.helpers SlimCms::Helpers
+      app.helpers RenderHelpers, SiteHelpers, TextHelpers
 
       app.set :partial_template_engine, :slim
-      app.set :root, app.root || File.dirname(__FILE__)
-      app.set :views, 'views'
-      app.set :config, 'config'
-      app.set :sitemap, ::SlimCms::Sitemap.new(app.root, app.config, app.views)
+
+      app.set :config, File.join(app.root || File.dirname(__FILE__), 'config')
+      app.set :archive, File.join(app.root || File.dirname(__FILE__), 'archive')
+      app.set :host, 'example.org'
+      app.set :scheme, 'http'
 
       app.before do
-        settings.sitemap.generate
+        @sitemap ||= ::SlimCms::Sitemap.new(app.root, app.config, app.views)
+        @sitemap.generate
       end
 
       app.get '/robots.txt' do
         content_type 'text/plain', charset: 'utf-8'
-
-        output = ['Sitemap: /sitemap.xml']
-
-        settings.sitemap.robots.each_pair do |ua, directives|
-          group = ["user-agent: #{ua}"]
-          group.concat(directives.sort)
-
-          output << group.join("\n")
-        end
-
-        output.join("\n\n")
+        ::SlimCms::Builders::RobotsTxt.new(@sitemap).build
       end
 
       app.get '/sitemap.xml' do
         content_type 'text/xml', charset: 'utf-8'
-
-        settings.sitemap.to_xml(request.scheme + '//' + request.host)
+        ::SlimCms::Builders::SitemapXml.new(@sitemap, settings.scheme + '://' + settings.host).build
       end
 
       app.get '/stylesheets/*.css' do
@@ -85,21 +43,14 @@ module Sinatra
           redirect @route.chop, 301
         end
 
-        raise Sinatra::NotFound unless @page = settings.sitemap.find(@route)
+        raise Sinatra::NotFound unless @page = @sitemap.find(@route)
 
         @index = @page[:children].clone rescue nil
 
-        if @route == '/'
-          render_view @route + 'index'
-
-        elsif !!@page[:directory]
-          if !!@page[:indexed]
-            render_view @route + '/index'
-          else
+        if !!@page[:directory] && !@page[:indexed]
             render_view 'common/index'
-          end
         else
-          render_view @route
+          render_view @page[:view_path]
         end
       end
     end

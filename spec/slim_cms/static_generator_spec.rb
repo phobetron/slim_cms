@@ -27,6 +27,7 @@ describe SlimCms::StaticGenerator do
     allow(FileUtils).to receive(:mkdir_p)
     allow(Dir).to receive(:pwd).and_return(pwd)
 
+    allow(app).to receive(:set).with(:static, false)
     allow(app).to receive(:call)
     allow(content).to receive(:body).and_return(content_body)
 

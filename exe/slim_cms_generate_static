@@ -4,10 +4,10 @@ require 'slim_cms/static_generator'
 require 'slim_cms/sitemap'
 require File.expand_path('app.rb', Dir.pwd)
 
-public_path = Pathname.new(File.join(Dir.pwd, 'public'))
+public_path = Pathname.new(Sinatra::Application.public_dir)
 
 if (public_path.exist?)
-  archive_path = Pathname.new(File.join(Dir.pwd, "archive/#{Time.now.strftime('%Y%m%d-%H%M')}"))
+  archive_path = Pathname.new(File.join(Sinatra::Application.root, Sinatra::Application.archive, Time.now.strftime('%Y%m%d-%H%M')))
 
   unless archive_path.directory?
     FileUtils.mkdir_p(archive_path)
@@ -17,7 +17,13 @@ if (public_path.exist?)
 end
 
 generator = SlimCms::StaticGenerator.new
-generator.generate_views(SlimCms::Sitemap.new(Sinatra::Application.root, 'config', 'views').generate)
+
+generator.generate_views(SlimCms::Sitemap.new(
+  Sinatra::Application.root,
+  Sinatra::Application.config,
+  Sinatra::Application.views
+).generate)
+
 generator.generate_stylesheets
 generator.generate_sitemap_xml
 generator.generate_robots_txt

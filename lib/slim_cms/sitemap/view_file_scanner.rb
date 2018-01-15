@@ -1,11 +1,12 @@
 require 'slim'
+require 'slim_cms/sitemap/mock_render_scope'
 
 module SlimCms
   class ViewFileScanner
 
     def initialize(root_path, view_path)
-      @root_path = root_path
-      @view_path = view_path
+      @root_path = Pathname.new(root_path)
+      @view_path = Pathname.new(view_path)
     end
 
     def scan(path, entries={})
@@ -63,7 +64,7 @@ module SlimCms
       if view_path.basename != 'index.slim' && (view_path + 'index.slim').exist?
         view_path = view_path + 'index.slim'
       end
-      view_path.sub(@root_path.to_s + '/', '')
+      view_path.sub("#{@root_path.to_s}/", '')
     end
 
     def route_for(path)

@@ -1,7 +1,6 @@
-require 'slim_cms/version'
-require 'slim_cms/mock_render_scope'
-require 'slim_cms/view_file_scanner'
+require 'slim_cms/builders'
 require 'slim_cms/sitemap'
 require 'slim_cms/static_generator'
+require 'slim_cms/version'
 
 require 'sinatra/slim_cms'

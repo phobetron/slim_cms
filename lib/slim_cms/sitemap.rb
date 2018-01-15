@@ -1,15 +1,14 @@
 require 'nokogiri'
 require 'pathname'
 require 'yaml'
-require 'slim_cms/view_file_scanner'
+require 'slim_cms/sitemap/view_file_scanner'
 
 module SlimCms
   class Sitemap
-
-    def initialize(root_path, conf_dir, view_dir)
+    def initialize(root_path, conf_dir, view_path)
       @root_path = Pathname.new(root_path)
-      @view_path = @root_path + view_dir
-      @conf_file = @root_path + (conf_dir + '/sitemap.yml')
+      @view_path = Pathname.new(view_path)
+      @conf_file = Pathname.new(File.join(conf_dir, 'sitemap.yml'))
 
       @scanner = ViewFileScanner.new(@root_path, @view_path)
 
@@ -83,37 +82,6 @@ module SlimCms
       map
     end
 
-    def to_xml(domain)
-      domain.chomp!('/')
-
-      Nokogiri::XML::Builder.new do
-        urlset(xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9') {
-          flatten.each do |path, meta|
-            url {
-              loc     domain + path
-              lastmod meta[:last_modified]
-            }
-          end
-        }
-      end.to_xml
-    end
-
-    def robots
-      groups = { '*' => [] }
-
-      flatten.each_pair do |path, meta|
-        if meta[:robots]
-          meta[:robots].each_pair do |ua, directive|
-            groups[ua.downcase] ||= []
-
-            groups[ua.downcase] << "#{directive.downcase}: #{path}"
-          end
-        end
-      end
-
-      groups
-    end
-
     private
 
     def write
@@ -124,6 +92,5 @@ module SlimCms
         false
       end
     end
-
   end
 end

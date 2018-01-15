@@ -37,8 +37,8 @@ describe SlimCms::Sitemap do
   subject do
     described_class.new(
       Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-      'config',
-      'views'
+      Pathname.new(File.dirname(__FILE__)) + '../fixtures/config',
+      Pathname.new(File.dirname(__FILE__)) + '../fixtures/views'
     )
   end
 
@@ -56,8 +56,8 @@ describe SlimCms::Sitemap do
         subject do
           described_class.new(
             Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-            'config',
-            'views_nonexistent'
+            Pathname.new(File.dirname(__FILE__)) + '../fixtures/config',
+            Pathname.new(File.dirname(__FILE__)) + '../fixtures/views_nonexistent'
           )
         end
 
@@ -73,8 +73,8 @@ describe SlimCms::Sitemap do
       subject do
         described_class.new(
           Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-          'config_exist',
-          'views'
+          Pathname.new(File.dirname(__FILE__)) + '../fixtures/config_exist',
+          Pathname.new(File.dirname(__FILE__)) + '../fixtures/views'
         )
       end
 
@@ -90,8 +90,8 @@ describe SlimCms::Sitemap do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-        'config_exist',
-        'views_nonexistent'
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures/config_exist',
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures/views_nonexistent'
       )
     end
 
@@ -118,8 +118,8 @@ describe SlimCms::Sitemap do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-        'config_exist',
-        'views_nonexistent'
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures/config_exist',
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures/views_nonexistent'
       )
     end
 
@@ -252,8 +252,8 @@ describe SlimCms::Sitemap do
     subject do
       described_class.new(
         Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-        'config_exist',
-        'views'
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures/config_exist',
+        Pathname.new(File.dirname(__FILE__)) + '../fixtures/views'
       )
     end
 
@@ -271,56 +271,6 @@ describe SlimCms::Sitemap do
 
       expect(flattened['/'][:children]).to be_nil
       expect(flattened['/sub'][:children]).to be_nil
-    end
-  end
-
-  describe '#to_xml' do
-    subject do
-      described_class.new(
-        Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-        'config_exist',
-        'views'
-      )
-    end
-
-    it 'outputs the sitemap in XML format' do
-      xml = subject.to_xml('http://example.com/')
-
-      expect(xml).to match('<\?xml version="1.0"\?>')
-    end
-
-    it 'outputs an entry for each page' do
-      xml = subject.to_xml('http://example.com/')
-
-      expect(xml).to match('<loc>http://example.com/</loc>')
-      expect(xml).to match('<loc>http://example.com/file</loc>')
-      expect(xml).to match('<loc>http://example.com/sub</loc>')
-      expect(xml).to match('<loc>http://example.com/sub/file</loc>')
-    end
-
-    it 'outputs the modified date for each page' do
-      xml = subject.to_xml('http://example.com/')
-
-      expect(xml).to match('<lastmod>2016-05-12 05:12:05 -0700</lastmod>')
-      expect(xml).to match('<lastmod>2016-05-12 04:59:49 -0700</lastmod>')
-      expect(xml).to match('<lastmod>2016-05-12 05:14:17 -0700</lastmod>')
-      expect(xml).to match('<lastmod>2016-05-12 04:59:49 -0700</lastmod>')
-    end
-  end
-
-  describe '#robots' do
-    subject do
-      described_class.new(
-        Pathname.new(File.dirname(__FILE__)) + '../fixtures',
-        'config_exist',
-        'views'
-      )
-    end
-
-    it 'outputs a hash of path directives grouped by user agent' do
-      robots = subject.robots
-
-      expect(robots.keys).to eq(['*'])
     end
   end
 end

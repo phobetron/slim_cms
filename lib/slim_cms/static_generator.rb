@@ -6,7 +6,9 @@ module SlimCms
     include Rack::Test::Methods
 
     def app
-      Rack::Builder.parse_file(File.expand_path('config.ru', Dir.pwd)).first
+      @app ||= Rack::Builder.parse_file(File.expand_path('config.ru', Dir.pwd)).first
+      @app.set :static, false
+      @app
     end
 
     def generate_views(sitemap)
